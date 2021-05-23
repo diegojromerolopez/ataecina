@@ -1,13 +1,11 @@
 import time
-from typing import Tuple, List
-
 import drawSvg
 import numpy as np
 
 from converters.base import Base
 
 
-class Linifier(Base):
+class RandomLinifier(Base):
     DEFAULT_LINE_COUNT = 1000
     DEFAULT_COLOR_TOLERANCE = 256 // 2
     DEFAULT_STROKE_WIDTH = 1
@@ -17,27 +15,26 @@ class Linifier(Base):
         line_count: int = kwargs.get('line_count', self.DEFAULT_LINE_COUNT)
         color_tolerance: int = kwargs.get('color_tolerance', self.DEFAULT_COLOR_TOLERANCE)
         stroke_width: int = kwargs.get('stroke_width', self.DEFAULT_STROKE_WIDTH)
-        allow_line_intersections: int = kwargs.get('allow_line_intersections',
-                                                   self.DEFAULT_ALLOW_LINE_INTERSECTIONS)
 
         width = self._input_image.width
         height = self._input_image.height
+        sx_seq = np.random.randint(0, width, size=line_count)
+        ex_seq = np.random.randint(0, width, size=line_count)
+        for i in range(0, line_count):
+            while sx_seq[i] - ex_seq[i] == 0:
+                sx_seq[i] = np.random.randint(0, width)
+                ex_seq[i] = np.random.randint(0, width)
+        sy_seq = np.random.randint(0, height, size=line_count)
+        ey_seq = np.random.randint(0, height, size=line_count)
 
         start_time = time.time()
         for i in range(0, line_count):
             start_ith_time = time.time()
-            delta_x = 0
-            sx = None
-            ex = None
-            while delta_x == 0:
-                sx = np.random.randint(0, width)
-                ex = np.random.randint(0, width)
-                sx, ex = min(sx, ex), max(sx, ex)
-                delta_x = ex - sx
 
-            sy = np.random.randint(0, height)
-            ey = np.random.randint(0, height)
-            sy, ey = min(sy, ey), max(sy, ey)
+            sx, ex = min(sx_seq[i], ex_seq[i]), max(sx_seq[i], ex_seq[i])
+            delta_x = ex_seq[i] - sx_seq[i]
+
+            sy, ey = min(sy_seq[i], ey_seq[i]), max(sy_seq[i], ey_seq[i])
             delta_y = ey - sy
 
             slope = delta_y / delta_x
