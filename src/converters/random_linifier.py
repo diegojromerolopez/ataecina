@@ -9,7 +9,6 @@ class RandomLinifier(Base):
     DEFAULT_LINE_COUNT = 1000
     DEFAULT_COLOR_TOLERANCE = 256 // 2
     DEFAULT_STROKE_WIDTH = 1
-    DEFAULT_ALLOW_LINE_INTERSECTIONS = False
 
     def _convert(self, output_image_path: str, **kwargs):
         line_count: int = kwargs.get('line_count', self.DEFAULT_LINE_COUNT)
